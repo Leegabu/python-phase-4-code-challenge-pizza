@@ -58,10 +58,12 @@ def create_restaurant_pizza():
         db.session.add(new_restaurant_pizza)
         db.session.commit()
         return jsonify(new_restaurant_pizza.to_dict()), 201
-    except KeyError as e:
-        return jsonify({"errors": f"Missing key: {e}"}), 400
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({"errors": ['validation errors']}), 400
     except Exception as e:
-        return jsonify({"errors": [str(e)]}), 400
+        db.session.rollback()
+        return jsonify({"errors": ['validation errors']}), 400
     
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
